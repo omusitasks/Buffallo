@@ -1,0 +1,343 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+library(tidyverse)
+
+set.seed(130)
+data <- data.frame(
+  Fish = c('Kamongo','Mumi','Mbuta','Omena','Fulu','Ngenge', 'Sew'),
+  Sacks_Harvested = c(50,60,40,37,65,45,50),
+  Colour = c('Dark grey','Dark grey','Grey','Grey','Grey','Grey','Grey'),
+  Selling_Price = c(1000, 1500, 800, 1780, 1200, 1050,1900),  
+  Profits = c(500, 800, 300, 1250, 700, 800,850),  
+  Date_Sold = c("15-2024-2","2-2024-13","17-2-2024","2-21-2024","4-22-2024","2024-24-12","2024-2-4")
+)
+
+# print(data)
+
+# Replacing ALL hyphens with "&" in Date_Sold column
+#data$Date_Sold <- gsub("-", "&", data$Date_Sold, fixed = TRUE)
+
+# Replacing the first hyphen with "&" in Date_Sold column
+#data$Date_Sold <- sub("-", "&", data$Date_Sold, fixed = TRUE)
+
+#data$Date_Sold <- sub("^(.*?)-(.*?)-", "\\1-\\2&", data$Date_Sold)
+
+data$Date_Sold <- gsub("-", "&", data$Date_Sold, fixed = TRUE)
+data$Date_Sold <- sub("&", "-", data$Date_Sold, fixed = TRUE)
+
+
+# Show the modified data
+str(data)
+```
+
+
+
+
+
+
+
+
+```{r} 
+library(tidyverse)
+# Original data
+data <- data.frame(
+  Fish = c('Kamongo','Mumi','Mbuta','Omena','Fulu','Ngenge', 'Sew'),
+  Sacks_Harvested = c(50,60,40,37,65,45,50),
+  Colour = c('Dark grey','Dark grey','Grey','Grey','Grey','Grey','Grey'),
+  Selling_Price = c(1000, 1500, 800, 1780, 1200, 1050,1900),  
+  Profits = c(500, 800, 300, 1250, 700, 800,850),  
+  Date_Sold = c("15-2024-2","2-2024-13","17-2-2024","2-21-2024","4-22-2024","2024-24-12","2024-2-4")
+)
+
+# Function to format date according to given conditions
+format_date <- function(date_string) {
+  parts <- strsplit(date_string, "-")[[1]]
+  
+  # Convert to numeric for easier comparison
+  parts_numeric <- as.numeric(parts)
+  
+  if (length(parts) == 3) {
+    # If already in yyyy-mm-dd format, return as is
+    return(date_string)
+  } else {
+    if (parts_numeric[1] < 1000) {
+      # Check if the first part has 4 digits
+      if (parts_numeric[2] >= 1 && parts_numeric[2] <= 12) {
+        # Swap first and second parts if necessary
+        return(paste(parts[2], parts[1], parts[3], sep = "-"))
+      } else {
+        # Swap first and third parts if necessary
+        return(paste(parts[3], parts[2], parts[1], sep = "-"))
+      }
+    } else if (parts_numeric[2] > 12) {
+      # Swap second and third parts if necessary
+      return(paste(parts[3], parts[2], parts[1], sep = "-"))
+    } else {
+      # No swapping needed, return as is
+      return(paste(parts[1], parts[2], parts[3], sep = "-"))
+    }
+  }
+}
+
+# Apply the format_date function to each value in Date_Sold column
+data$Formatted_Date <- sapply(data$Date_Sold, format_date)
+
+# Show the modified data
+print(data)
+
+
+
+```
+
+
+
+
+
+# split dates into day month and year
+
+```{r}
+# Splitting Date_Sold into day, month, and year
+date_split <- strsplit(as.character(data$Date_Sold), "-")
+
+# Extracting day, month, and year
+data$Day <- sapply(date_split, "[[", 1)
+data$Month <- sapply(date_split, "[[", 2)
+data$Year <- sapply(date_split, "[[", 3)
+
+# Reordering columns
+# data <- data[, c(1:5, 8, 6, 7, 9)]
+
+# Show the modified data
+print(data)
+```
+
+
+
+
+
+
+
+
+
+```{r}
+
+library(tidyverse)
+# Original data
+data <- data.frame(
+  Fish = c('Kamongo','Mumi','Mbuta','Omena','Fulu','Ngenge', 'Sew'),
+  Sacks_Harvested = c(50,60,40,37,65,45,50),
+  Colour = c('Dark grey','Dark grey','Grey','Grey','Grey','Grey','Grey'),
+  Selling_Price = c(1000, 1500, 800, 1780, 1200, 1050,1900),  
+  Profits = c(500, 800, 300, 1250, 700, 800,850),  
+  Date_Sold = c("15-2024-2","2-2024-13","17-2-2024","2-21-2024","4-22-2024","2024-24-12","2024-2-4")
+)
+
+# Function to format date according to given conditions
+format_date <- function(date_string) {
+  parts <- strsplit(date_string, "-")[[1]]
+  
+  # Check if date is already in yyyy-mm-dd format
+  if (length(parts) == 3 && nchar(parts[1]) == 4 && as.numeric(parts[2]) >= 1 && as.numeric(parts[2]) <= 12) {
+    return(date_string)  # Return as is
+  }else {
+    year <- parts[1]
+    month <- parts[2]
+    day <- parts[3]
+    
+    # Check if month is within 1 to 12 range
+    if (as.numeric(month) > 12) {
+      # If not, swap with third part
+      month <- day
+      day <- parts[3]
+    }
+    
+    # Check if year has 4 digits
+    if (nchar(year) != 4) {
+        month <- year
+        year <- parts[2]
+      } else {
+        day <- year
+        year <- parts[2]
+      }
+    
+    # Check if month is within 1 to 12 range
+    if (as.numeric(month) > 12) {
+      # If not, swap with third part
+      day <- month
+      month <- parts[3]
+    }
+    
+    # Return formatted date
+    return(paste(year, month, day, sep = "-"))
+  }
+}
+
+# Apply the format_date function to each value in Date_Sold column
+data$Formatted_Date <- sapply(data$Date_Sold, format_date)
+
+# Show the modified data
+print(data)
+
+
+```
+
+
+
+
+
+
+
+```{r}
+
+library(tidyverse)
+# Original data
+data <- data.frame(
+  Fish = c('Kamongo','Mumi','Mbuta','Omena','Fulu','Ngenge', 'Sew'),
+  Sacks_Harvested = c(50,60,40,37,65,45,50),
+  Colour = c('Dark grey','Dark grey','Grey','Grey','Grey','Grey','Grey'),
+  Selling_Price = c(1000, 1500, 800, 1780, 1200, 1050,1900),  
+  Profits = c(500, 800, 300, 1250, 700, 800,850),  
+  Date_Sold = c("15-2024-2","2-2024-13","17-2-2024","2-21-2024","4-22-2024","2024-24-12","2024-2-4")
+)
+
+# Function to format date according to given conditions
+format_date <- function(date_string) {
+  parts <- strsplit(date_string, "-")[[1]]
+  
+  # Check if part 1 has 4 digits
+  if (nchar(parts[1]) != 4) {
+    # If not, move to part 2 and check for 4 digits
+    if (nchar(parts[2]) == 4) {
+      # Swap parts 1 and 2
+      temp <- parts[1]
+      parts[1] <- parts[2]
+      parts[2] <- temp
+    } else {
+      # If part 2 doesn't have 4 digits, move to part 3 and check for 4 digits
+      if (nchar(parts[3]) == 4) {
+        # Swap parts 1 and 3
+        temp <- parts[1]
+        parts[1] <- parts[3]
+        parts[3] <- temp
+      }
+    }
+  }
+  
+  # Check if part 1 has 4 digits
+  if (nchar(parts[1]) == 4) {
+    # Check if part 2 is within 1 and 12
+    if (as.numeric(parts[2]) > 12) {
+      # Swap parts 2 and 3
+      temp <- parts[2]
+      parts[2] <- parts[3]
+      parts[3] <- temp
+    }
+    
+    # Check if the swapped value from part 1 to part 2 is more than 12
+    if (as.numeric(parts[2]) > 12) {
+      # Swap the values again with part 3
+      temp <- parts[2]
+      parts[2] <- parts[3]
+      parts[3] <- temp
+    }
+  } else {
+    # Check if part 3 has 4 digits
+    if (nchar(parts[3]) == 4) {
+      # Swap parts 1 and 3
+      temp <- parts[1]
+      parts[1] <- parts[3]
+      parts[3] <- temp
+    }
+  }
+  
+  # Return formatted date
+  return(paste(parts, collapse = "-"))
+}
+
+# Apply the format_date function to each value in Date_Sold column
+data$Formatted_Date <- sapply(data$Date_Sold, format_date)
+
+# Show the modified data
+print(data)
+
+
+```
+
+
+
+```{r}
+# Example FOR One-sample t-test 
+set.seed(123)
+
+# Generating a sample of 20 scores with mean 70 and standard deviation 10
+sample_data <- rnorm(20, mean = 70, sd = 10)  
+
+# Testing whether the mean of sample_data differs significantly from 75
+t.test(sample_data, mu = 75)  
+
+
+```
+
+
+
+# Another date problem
+
+```{r}
+library(dplyr)
+library(lubridate)
+
+# Create a dataframe
+Amazon <- data.frame(
+  Customer_Name = c("Jane", "Mike", "Lord", "John", "James", "Vincent", "Kevin", "Elkanah", "Philip"),
+  Joining_Date = c("9/16-2015", "10.12.2017", "02.12.2014", "8-Mar-2018", "2016/12/8", "04/26/2016", "5/3/2016", "2016/Tuesday/12", "Mon-Aug-19"),
+  Store_Location = c("Taylor", "North Raleigh", "North Raleigh", "North Raleigh", "North Raleigh", "North Raleigh", "Northwest Cary", "Northwest Cary", "Northwest Cary")
+)
+
+# Print the dataframe
+print(Amazon)
+
+```
+
+
+```{r}
+# Define a function to convert Joining_Date column to the desired format
+fix_date <- function(date_vec) {
+  # Detect the current date format
+  date_format <- ifelse(
+    grepl("/", date_vec), "%m/%d-%Y",
+    ifelse(grepl("\\.", date_vec), "%d.%m.%Y",
+      ifelse(grepl("-", date_vec), "%d-%b-%Y",
+        ifelse(grepl("\\-", date_vec), "%Y/%d/%m",
+          ifelse(grepl("/", date_vec), "%Y/%m/%d",
+            ifelse(grepl("/", date_vec), "%Y/%A/%m",
+              ifelse(grepl("/", date_vec), "%A-%b-%y","%Y-%m-%d")
+            )
+          )
+        )
+      )
+    )
+  )
+  
+  # Parse the date using the detected format
+  parsed_date <- as.Date(date_vec, format = date_format)
+  
+  # Convert the parsed date to the desired format
+  formatted_date <- format(parsed_date, "%Y-%m-%d")
+  
+  return(formatted_date)
+}
+
+# Apply the fix_date function to the Joining_Date column
+Amazon$Joining_Date <- fix_date(Amazon$Joining_Date)
+
+# Print the updated dataframe
+print(Amazon)
+```
+
+

@@ -1,0 +1,320 @@
+---
+title: "R STATISTICAL TESTS"
+output: html_notebook
+---
+
+# 1. t-test
+
+**one-sample t-test**
+
+
+```{r}
+
+# Generate sample data
+apple_weights <- c(145, 152, 147, 155, 148)
+
+# Perform one-sample t`-test
+t.test(apple_weights, mu = 150)
+
+```
+
+**two-sample t-test**
+
+```{r}
+# Generate sample data
+heights_male <- c(170, 175, 180, 178, 172)
+heights_female <- c(160, 165, 168, 162, 170)
+
+# Perform two-sample t-test
+t.test(heights_male, heights_female)
+
+
+```
+
+**Independent t-test**
+
+```{r}
+# Generate sample data
+scores_school_A <- c(85, 90, 88, 92, 87)
+scores_school_B <- c(82, 88, 85, 86, 90)
+
+# Perform independent samples t-test
+t.test(scores_school_A, scores_school_B)
+
+
+```
+
+**paired t-test(dependent t-test)**
+
+```{r}
+
+# Generate sample data
+before_medication <- c(120, 125, 118, 122, 123)
+after_medication <- c(115, 120, 118, 119, 121)
+
+# Perform paired samples t-test
+t.test(before_medication, after_medication, paired = TRUE)
+
+```
+
+# 2. ANOVA (Analysis of Variance)
+
+**one-way ANOVA**
+
+```{r}
+# Generate sample data
+method_a_scores <- c(85, 90, 88, 92, 87)
+method_b_scores <- c(82, 88, 85, 86, 90)
+method_c_scores <- c(78, 84, 80, 82, 85)
+
+# Perform one-way ANOVA
+anova_result <- aov(c(method_a_scores, method_b_scores, method_c_scores) ~ c(rep("Method A", 5), rep("Method B", 5), rep("Method C", 5)))
+summary(anova_result)
+
+
+```
+
+**two-way ANOVA**
+
+```{r}
+
+# Generate sample data
+set.seed(123) # for reproducibility
+gender <- factor(rep(c("Male", "Female"), each = 50))
+treatment <- factor(rep(c("Drug A", "Drug B"), each = 50))
+blood_pressure <- c(rnorm(50, mean = 120, sd = 10),
+                    rnorm(50, mean = 130, sd = 15),
+                    rnorm(50, mean = 125, sd = 12),
+                    rnorm(50, mean = 135, sd = 14))
+
+# Create a data frame
+data <- data.frame(gender, treatment, blood_pressure)
+
+# Perform two-way ANOVA
+anova_result <- aov(blood_pressure ~ gender + treatment + gender:treatment, data = data)
+
+# Summarize the ANOVA results
+summary(anova_result)
+
+
+
+```
+
+**repeated measures ANOVA**
+
+```{r}
+# Generate sample data
+before <- c(25, 28, 30, 22, 27)
+immediately_after <- c(20, 18, 24, 19, 21)
+one_hour_after <- c(22, 19, 18, 20, 23)
+
+# Perform repeated measures ANOVA
+anova_result <- aov(c(before, immediately_after, one_hour_after) ~ c(rep("Before", 5), rep("Immediately After", 5), rep("One Hour After", 5)))
+
+# Get ANOVA table
+anova_table <- summary(anova_result)[[1]]
+# Extract relevant information
+p_value <- anova_table[["Pr(>F)"]]
+# Create a table manually
+result_table <- data.frame(
+  Source = rownames(anova_table),
+  Df = anova_table[,"Df"],
+  Sum_Sq = anova_table[,"Sum Sq"],
+  Mean_Sq = anova_table[,"Mean Sq"],
+  F_value = anova_table[,"F value"],
+  P_value = p_value
+)
+# display the table
+print(result_table)
+```
+
+# 3. Chi-squared test
+
+**Chi-squared test of independence**
+
+```{r}
+# Create contingency table
+gender <- c("Male", "Male", "Female", "Female", "Male", "Female", "Male", "Female", "Female", "Male")
+voting_preference <- c("Democrat", "Republican", "Democrat", "Independent", "Republican", "Republican", "Democrat", "Democrat", "Independent", "Republican")
+table_data <- table(gender, voting_preference)
+
+# Perform Chi-squared test of independence
+chi_squared_test <- chisq.test(table_data)
+chi_squared_test
+
+```
+
+**Chi-squared goodness-of-fit**
+
+```{r}
+# Create observed and expected frequency vectors
+observed_eye_colors <- c(120, 180, 90, 30)
+expected_eye_colors <- c(150, 170, 80, 20)
+
+# Perform Chi-squared goodness-of-fit test
+chi_squared_test <- chisq.test(observed_eye_colors, p = expected_eye_colors / sum(expected_eye_colors))
+chi_squared_test
+
+
+```
+
+# 4. Correlation test
+
+**Pearson correlation test**
+
+```{r}
+# Generate sample data
+hours_studied <- c(4, 6, 3, 5, 7, 6, 8, 5, 3, 9)
+exam_scores <- c(65, 70, 60, 75, 80, 70, 85, 70, 55, 90)
+
+# Perform Pearson correlation test
+pearson_correlation <- cor.test(hours_studied, exam_scores, method = "pearson")
+pearson_correlation
+
+
+```
+
+**Spearman correlation test**
+
+```{r}
+# Generate sample data
+exam1_ranks <- c(1, 2, 3, 4, 5)
+exam2_ranks <- c(2, 3, 5, 1, 4)
+
+# Perform Spearman correlation test
+spearman_correlation <- cor.test(exam1_ranks, exam2_ranks, method = "spearman")
+spearman_correlation
+
+
+```
+
+**Kendall correlation test**
+
+```{r}
+# Generate sample data
+exam1_ranks <- c(1, 2, 3, 4, 5)
+exam2_ranks <- c(2, 3, 5, 1, 4)
+
+# Perform Kendall correlation test
+kendall_correlation <- cor.test(exam1_ranks, exam2_ranks, method = "kendall")
+kendall_correlation
+
+
+```
+
+# 5. Linear regression
+
+**Simple Linear Regression**
+
+```{r}
+# Sample data for simple linear regression
+hours_studied <- c(4, 6, 3, 5, 7, 6, 8, 5, 3, 9)
+exam_scores <- c(65, 70, 60, 75, 80, 70, 85, 70, 55, 90)
+
+# Fit simple linear regression model
+simple_linear_model <- lm(exam_scores ~ hours_studied)
+
+# Summary of the simple linear regression model
+summary(simple_linear_model)
+
+
+```
+
+**Multiple Linear Regression**
+
+```{r}
+# Generate sample data
+area <- c(1000, 1500, 1200, 1800, 2000)
+bedrooms <- c(2, 3, 2, 4, 3)
+location <- c(1, 2, 2, 3, 1)
+price <- c(103.2, 209.23, 289.23, 378.34, 100.23)
+
+# Fit multiple linear regression model
+multiple_linear_model <- lm(price ~ area + bedrooms + location)
+
+# Summary of the multiple linear regression model
+summary(multiple_linear_model)
+
+
+```
+
+**Polynomial Regression**
+
+```{r}
+
+# Sample data for polynomial regression
+advertising <- c(100, 200, 300, 400, 500)
+sales <- c(50, 80, 120, 150, 200)
+
+# Fit polynomial regression model
+polynomial_model <- lm(sales ~ poly(advertising, 2))
+
+# Summary of the polynomial regression model
+summary(polynomial_model)
+
+
+```
+
+# 6. Logistic regression
+
+**Binary Logistic Regression**
+
+```{r}
+
+# Sample data for binary logistic regression
+# Assuming 1 represents spam and 0 represents not spam
+spam <- c(1, 0, 1, 0, 1)
+subject_length <- c(10, 20, 15, 25, 12)
+
+# Fit binary logistic regression model
+binary_logistic_model <- glm(spam ~ subject_length, family = binomial(link = "logit"))
+
+# Summary of the binary logistic regression model
+summary(binary_logistic_model)
+
+```
+
+**Multinomial Logistic Regression**
+
+```{r}
+
+# Load the required package
+library(nnet)
+
+# Sample data for multinomial logistic regression
+crop_type <- c("wheat", "rice", "maize", "wheat", "rice")
+ph_level <- c(6.5, 7.2, 5.8, 6.9, 6.0)
+
+# Convert crop_type to a factor
+crop_type <- factor(crop_type)
+
+# Create a data frame
+data <- data.frame(crop_type, ph_level)
+
+# Fit multinomial logistic regression model
+multinomial_logistic_model <- multinom(crop_type ~ ph_level, data = data)
+
+# Summary of the multinomial logistic regression model
+summary(multinomial_logistic_model)
+
+
+
+```
+
+**Ordinal Logistic Regression**
+
+```{r}
+# Load the required package
+library(MASS)
+
+# Sample data for ordinal logistic regression
+satisfaction <- ordered(c("low", "medium", "high", "low", "high"))
+service_quality <- c(3, 4, 2, 5, 3)
+
+# Fit ordinal logistic regression model
+ordinal_logistic_model <- polr(satisfaction ~ service_quality, method = "logistic")
+
+# Summary of the ordinal logistic regression model
+summary(ordinal_logistic_model)
+
+```

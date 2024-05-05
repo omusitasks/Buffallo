@@ -1,0 +1,54 @@
+image
+price (if course_type = premium)
+rating
+title/name
+Instructor_name
+time (in hrs)
+number of students
+
+ROUTES - DONE
+BLOG PAGE -DONE
+click blog - gives you blog, (tags and categroies) related to that blog - DONE
+click category - gives you list of blogs on that category only
+click tags - gives you list of blogs with that tag only
+
+commenting system on individual blog
+
+admin dashboard for system information
+
+1. admin dashboard for students
+- courses enrollment (free/premium)(attachment)
+  - you get direct access to its materials. (download)
+- courses unenrollment (attachment)
+  - you can't access its materials
+- materials download
+
+2. admin dashboard for tutors
+- register for a course
+  - can upload materials for that course
+
+3. admin dashboard for clients
+- can upload a project
+  - project files
+  - project name/descripiton/budget
+  -  skills needed
+  - duration
+- wait for admin to act on it, here the project can be;
+  - rejected 
+  - accepted/taken (means doable and accepts the terms)
+
+
+
+
+if image is not picked on update
+select button on update
+delete confirma pop up box
+uniqueniess in store method
+
+
+i have table called par_blogs for blogs
+i want to create commnet system for the blog such that authenticated users can comment on specific blog, user can reply to any of the commnets made by
+other users , below is the html code for comment;
+
+
+

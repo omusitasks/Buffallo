@@ -1,0 +1,104 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+
+# Create customers data frame
+customers <- data.frame(
+  customer_id = c(1, 2, 3, 4, 5, 6, 7),
+  name = c("John", "Alice", "Bob", "Cate", "Winnie", "Kevin", "Brian")
+)
+
+# Create customers data frame
+customers_case_two <- data.frame(
+  customer_id = c(1, 2, 3, 4, 5, 6, 7),
+  customer_name = c("John", "Alice", "Bob", "Cate", "Winnie", "Kevin", "Brian")
+)
+
+# Create orders data frame
+orders <- data.frame(
+  order_id = c(101, 102, 103, 104),
+  customer_id = c(1, 2, 1, 3),
+  order_date = as.Date(c("2022-01-15", "2022-01-16", "2022-01-17", "2022-01-18")),
+  amount = c(100.00, 150.00, 200.00, 120.00)
+)
+
+# Create products data frame
+products <- data.frame(
+  product_id = c(1, 2, 3),
+  name = c("Product A", "Product B", "Product C"),
+  price = c(10.00, 20.00, 30.00)
+)
+
+# Create order_details data frame
+order_details <- data.frame(
+  order_id = c(101, 102, 103, 103, 104),
+  product_id = c(1, 2, 1, 3, 3),
+  quantity = c(2, 1, 3, 2, 1),
+  total_price = c(20.00, 20.00, 30.00, 60.00, 30.00)
+)
+
+# Export data to CSV files
+write.csv(customers, "customers.csv", row.names = FALSE)
+write.csv(orders, "orders.csv", row.names = FALSE)
+write.csv(products, "products.csv", row.names = FALSE)
+write.csv(order_details, "order_details.csv", row.names = FALSE)
+write.csv(customers_case_two, "customers_case_two.csv", row.names = FALSE)
+
+```
+
+
+
+
+
+```{r}
+
+## THE SECOND CASE, ALL COLUMNS IN ALL TABLES HAVE DIFFERENT NAMES
+
+# Merge data frames using INNER JOIN
+merged_data <- merge(orders, customers_case_two, by = "customer_id")
+merged_data <- merge(merged_data, order_details, by = "order_id")
+merged_data <- merge(merged_data, products, by = "product_id")
+
+# Select relevant columns
+result <- merged_data[c("order_id", "customer_name", "order_date", "name", "price", "quantity", "total_price")]
+
+# Rename columns
+colnames(result) <- c("order_id", "customer_name", "order_date", "product_name", "price", "quantity", "total_price")
+
+# Print result
+print(result)
+
+
+```
+
+
+
+
+
+```{r}
+
+## THE FIRST CASE, ALL COLUMNS IN ALL TABLES HAVE SAME NAMES
+
+
+# Merge data frames using INNER JOIN
+merged_data <- merge(orders, customers, by = "customer_id")
+merged_data <- merge(merged_data, order_details, by = "order_id")
+merged_data <- merge(merged_data, products, by = "product_id")
+
+# Select relevant columns
+result <- merged_data[c("order_id", "name.x", "order_date", "name.y", "price", "quantity", "total_price")]
+
+# Rename columns
+colnames(result) <- c("order_id", "customer_name", "order_date", "product_name", "price", "quantity", "total_price")
+
+# Print result
+print(result)
+
+
+
+```
+
+
