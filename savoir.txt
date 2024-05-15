@@ -1,0 +1,38 @@
+php artisan module:make SystemCourses
+
+php artisan module:make-controller CourseController SystemCourses
+php artisan module:make-controller CourseCategoriesController  SystemCourses
+php artisan module:make-controller CourseTypeController SystemCourses
+php artisan module:make-controller BaseController  SystemCourses
+
+
+
+
+
+php artisan module:make SystemProjects
+
+php artisan module:make-controller ProjectController SystemProjects
+php artisan module:make-controller ProjectCategoriesController  SystemProjects
+php artisan module:make-controller ProjectStatusController SystemProjects
+php artisan module:make-controller ProjectTypeController SystemProjects
+php artisan module:make-controller BaseController  SystemProjects
+
+
+php artisan module:make SystemBlog
+
+php artisan module:make-controller BlogController SystemBlog
+php artisan module:make-controller BlogCategoriesController  SystemBlog
+php artisan module:make-controller TagsController SystemBlog
+php artisan module:make-controller BaseController  SystemBlog
+
+
+php artisan module:make-controller Controller  SystemBlog
+
+
+
+
+git config --global user.name "omusitasks"
+
+git config --global user.email "omusi.tasks@gmail.com"
+
+php artisan migrate:fresh --seed
